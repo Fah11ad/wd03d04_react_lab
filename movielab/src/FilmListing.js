@@ -1,27 +1,32 @@
-import React from 'react'
+
 import FilmRow from './FilmRow'
+import React, { Component } from 'react'
+import './index'
 
-
-const FilmListing = (props) => {
-
-  let url = props.moviesImg
-  let allFilms = props.movies.map((item) => {
+export default class FilmListing extends Component {
+  state ={
+    filter:'all'
+  }
+  render() {
+    let url = this.props.moviesImg
+  let allFilms = this.props.movies.map((item) => {
     return <FilmRow item={item} url={url} />
   })
   let handleFilterClick = (filter) =>{
     console.log(`Setting filter to ${filter}`);
+    this.setState({
+      filter: filter
+  }) 
   }
-
-  return (
-    
-    <div className="film-list">
+    return (
+      <div className="film-list">
     <h1 className="section-title">FILMS</h1>
     <div className="film-list-filters">
-        <div className="film-list-filter" onClick={()=> handleFilterClick('all')}>
+        <div className={`film-list-filter ${this.state.filter === 'all' ? 'is-active' : ''}`} onClick={() => handleFilterClick('all')}>
             ALL
-            <span className="section-count">{props.movies.length}</span>
+            <span className="section-count">{this.props.movies.length}</span>
         </div>
-        <div className="film-list-filter" onClick={() => handleFilterClick('faves')}>
+        <div className={`film-list-filter ${this.state.filter === 'faves' ? 'is-active' : ''}`} onClick={() => handleFilterClick('faves')}>
             FAVES
             <span className="section-count">0</span>
         </div>
@@ -29,8 +34,6 @@ const FilmListing = (props) => {
 
     {allFilms}
 </div>
-
-  )
+    )
+  }
 }
-
-export default FilmListing
