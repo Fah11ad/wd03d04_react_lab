@@ -9,8 +9,8 @@ export default class FilmListing extends Component {
   }
   render() {
     let url = this.props.moviesImg
-  let allFilms = this.props.movies.map((item) => {
-    return <FilmRow item={item} url={url} />
+  let allFilms = this.props.movies.map((item,index) => {
+    return <FilmRow item={item} url={url} key={index}/>
   })
   let handleFilterClick = (filter) =>{
     console.log(`Setting filter to ${filter}`);
