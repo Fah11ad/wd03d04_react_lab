@@ -1,9 +1,10 @@
+import axios from "axios"
 import React, { Component } from 'react'
 import './App.css';
 import FilmListing from './FilmListing'
 import FilmDetails from './FilmDetails'
 import TMDB from './TMDB'
-import Fave from './Fave';
+
 
 export default class App extends Component {
   constructor(props){
@@ -17,29 +18,45 @@ export default class App extends Component {
   //event handlers
   this.handleFaveToggle = this.handleFaveToggle.bind(this)
 }
+handleDetailsClick=(film)=>{
+  console.log(`Fetching details for ${film}`);
+}
 
 
   handleFaveToggle = (film)=>{
-    const faves = this.film.state.faves.slice()
+    const faves = this.state.faves.slice(0)
     const filmIndex = faves.indexOf(film)
-    if(filmIndex === 0){
-       faves.splice(0,1)
-    }else if(filmIndex === -1){
-       faves.push(film)
+    if(filmIndex === -1){
+      console.log(`Adding [FILM NAME] to faves`);
+      faves.push(film)
+    }else{
+      console.log(`Removing [FILM NAME] from faves`);
+       faves.splice(filmIndex,1)
     }
-    this.setState({faves}) 
+    const url = `https://api.themoviedb.org/3/movie/${film.id}?api_key=${TMDB.api_key}&append_to_response=videos,images&language=en`
+
+    axios({
+      method: 'GET',
+      url: url
+    }).then(response => {
+      console.log(response);
+      console.log(`Fetching details for ${film}`);
+      this.setState({current: response.data})
+
+    })
+    this.setState({
+      faves:faves
+    }) 
   }
   
   render() {
-    console.log(TMDB.api_key)
-    console.log(this.state.faves.slice())
-    
     return (
+      <div className="App">
         <div className="film-library">
-        <FilmListing movies={this.state.films} faves={this.state.faves} onFaveToggle={this.props.handleFaveToggle} moviesImg={TMDB.api_key} />
-        <FilmDetails movies={this.state.films} current={this.state.current} />
-        <Fave faves={this.state.faves}/>
+        <FilmListing films={this.state.films} faves={this.state.faves} onFaveToggle={this.props.handleFaveToggle} moviesImg={TMDB.api_key} moviesImg={TMDB.api_key} onFaveToggle={this.handleFaveToggle}/>
+        <FilmDetails current={this.state.current} current={this.state.current} />
 
+        </div>
         </div>
       
     )
